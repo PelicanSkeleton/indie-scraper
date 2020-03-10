@@ -3,8 +3,10 @@ var router = express.Router();
 var cheerio = require("cheerio");
 var puppeteer = require("puppeteer");
 var axios = require("axios");
+var db = require("../../models")
 
-router.get("/scrape", (req, res) => {
+
+router.get("/api/scrape", (req, res) => {
     let scrapeBarsuk = async () => {
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
@@ -16,7 +18,7 @@ router.get("/scrape", (req, res) => {
 
             const titles = document.querySelectorAll('.news_blurb');
 
-            for(i = 0; i < titles.length; i++) {
+            for (i = 0; i < titles.length; i++) {
                 const articles = titles[i];
                 let title = articles.children[1].innerText;
                 let link = articles.children[0].children[0].href;
@@ -77,11 +79,11 @@ router.get("/scrape", (req, res) => {
         console.log("\n");
     });
 
-    axios.get("https://www.subpop.com/news/category/news").then(function (response){
+    axios.get("https://www.subpop.com/news/category/news").then(function (response) {
         var $ = cheerio.load(response.data);
         var subpop = [];
 
-        $(".news-title").each(function (i, element){
+        $(".news-title").each(function (i, element) {
             var title = $(element).children().text();
             var link = $(element).find("a").attr("href");
 
@@ -105,9 +107,9 @@ router.get("/scrape", (req, res) => {
         const result = await page.evaluate(() => {
             let polyvinyl = [];
             const titles = document.querySelectorAll('.news-item');
-            
 
-            for(i = 0; i < titles.length; i++) {
+
+            for (i = 0; i < titles.length; i++) {
                 const articles = titles[i];
                 let title = articles.innerText.split("\n");
                 let link = articles.children[0].href;
@@ -140,7 +142,7 @@ router.get("/scrape", (req, res) => {
             topshelf = [];
             const titles = document.querySelectorAll(".header");
 
-            for(i = 0; i < 10; i++) {
+            for (i = 0; i < 10; i++) {
                 const articles = titles[i];
                 let title = articles.innerText;
                 let link = "https://www.topshelfrecords.com/news";
@@ -155,7 +157,7 @@ router.get("/scrape", (req, res) => {
 
         browser.close();
         return result;
-        
+
     }
 
     scrapeTopshelf().then((result) => {
@@ -163,7 +165,18 @@ router.get("/scrape", (req, res) => {
         console.log(result);
         console.log("\n");
     })
-    
+
 });
+
+router.post("api/saved", function (req, res) {
+    // Create a new Article using the `result` object built from scraping
+    const result = {
+        title: "test title",
+        link: "test link"
+    }
+    db.Article.create(result)
+        .then(dbModel => res.json(dbModel))
+        .catch(err => res.status(422).json(err));
+})
 
 module.exports = router;
