@@ -1,8 +1,9 @@
 const express = require("express");
-
 const mongoose = require("mongoose");
-const routes = require("./routes");
+
+const routes = require("../routes");
 const app = express();
+
 let PORT;
 if (process.env.NODE_ENV === "production"){
     PORT = process.env.PORT
@@ -21,9 +22,8 @@ app.use(routes);
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsarticles";
 
-// mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/newsarticles");
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
+// mongo store? for session stuff?
 app.listen(PORT, function() {
     console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });

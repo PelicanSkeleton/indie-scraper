@@ -1,26 +1,97 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { Route, Switch, Redirect } from "react-router-dom";
+import LoginForm from "./pages/Auth/LoginForm";
+import SignupForm from "./pages/Auth/SignupForm";
+import Navbar from "./components/Nav";
+import Home from "./pages/Home";
+import Saved from "./pages/SavedArticles";
+import Detail from "./pages/Detail";
+import Matchless from "./pages/Matchless";
+import AUTH from "./utils/AUTH";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      loggedIn: false,
+      user: null
+    };
+  }
+
+  componentDidMount() {
+    AUTH.getUser().then(response => {
+      console.log(response.data);
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        });
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        });
+      }
+    });
+  }
+
+  logout = (event) => {
+    event.preventDefault();
+    AUTH.logout().then(response => {
+      console.log(response.data);
+      if (response.status === 200) {
+        this.setState({
+          loggedIn: false,
+          user: null
+        });
+      }
+    });
+  }
+
+  login = (username, password) => {
+    AUTH.login(username, password).then(response => {
+      console.log(response);
+      if (response.status === 200) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        });
+      }
+    });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        {this.state.loggedIn && (
+          <div>
+            <Navbar user={this.state.user} logout={this.logout} />
+            <div className="main-view">
+              <Switch>
+                <Route exact path="/" render={() => <Redirect to="/articles" />} />
+                <Route exact path="/articles" render={() => <Home />} />
+                <Route exact path="/articles/:id" render={props => <Detail {...props} user={this.state.user} />} />
+                <Route exact path="/watched-articles" render={() => <Saved user={this.state.user} />} />
+                <Route component={Matchless} />
+              </Switch>
+            </div>
+          </div>
+        )}
+        {!this.state.loggedIn && (
+          <div className="auth-wrapper" style={{ paddingTop: 40 }}>
+            <Switch>
+              {<Route exact path="/" component={() => <LoginForm login={this.login} />} />}
+              {<Route exact path="/articles" component={() => <Redirect to="/" />} />}
+              {<Route exact path="/articles/id" component={() => <Redirect to="/" />} />}
+              {<Route exact path="/watched-articles" component={() => <Redirect to="/" />} />}
+              <Route exact path="/signup" component={SignupForm} />
+              <Route component={Matchless} />
+            </Switch>
+          </div>
+        )}
+      </div>
+    )
+  }
 }
 
 export default App;
