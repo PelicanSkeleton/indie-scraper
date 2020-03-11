@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, Redirect } from "react-router-dom";
 import LoginForm from "./pages/Auth/LoginForm";
 import SignupForm from "./pages/Auth/SignupForm";
-import Navbar from "./components/Nav";
+import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import Saved from "./pages/SavedArticles";
 import Detail from "./pages/Detail";
@@ -65,7 +65,7 @@ class App extends Component {
       <div className="App">
         {this.state.loggedIn && (
           <div>
-            <Navbar user={this.state.user} logout={this.logout} />
+            <Nav user={this.state.user} logout={this.logout} />
             <div className="main-view">
               <Switch>
                 <Route exact path="/" render={() => <Redirect to="/articles" />} />

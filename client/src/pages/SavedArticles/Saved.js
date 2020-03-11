@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import API from "../../utils/API";
 import { SavedCard } from "../../components/SavedCard";
 import { Row, Container, Col } from "../../components/Grid";
-import DeleteBtn from "../../components/DeleteBtn";
 
 class Saved extends Component {
    constructor(props) {

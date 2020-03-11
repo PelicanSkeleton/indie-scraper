@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const routes = require("../routes");
+const routes = require("./server/routes");
 const app = express();
 
 let PORT;
