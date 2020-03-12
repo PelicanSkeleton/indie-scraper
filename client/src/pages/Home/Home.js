@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import API from "../../utils/API";
-import { Card } from "../../components/Card";
+import Card from "../../components/Card";
 import { Row, Container, Col } from "../../components/Grid";
 import { ScrapeBtn } from "../../components/ScrapeBtn";
 class Home extends Component {

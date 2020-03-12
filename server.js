@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const passport = require("./server/passport");
 
 const routes = require("./server/routes");
 const app = express();
@@ -19,6 +20,9 @@ if(process.env.NODE_ENV === "production") {
 }
 
 app.use(routes);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsarticles";
 
