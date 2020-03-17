@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import API from "../../utils/API";
 import { SavedCard } from "../../components/SavedCard";
 import { Row, Container, Col } from "../../components/Grid";
+import DeleteBtn from "../../components/DeleteBtn";
 
 class Saved extends Component {
    constructor(props) {
@@ -43,7 +44,7 @@ class Saved extends Component {
                     <Row>
                         <Col size="md-12 sm-12">
                             <h1>Saved Articles</h1>
-                            {this.state.articles.map((a, index) => <SavedCard key={`${a._id}${index}`} id={a._id} url={"https://www.reddit.com" + a.link} headLine={a.headLine} summary={a.summary} removeArticle={() => this.handleRemoval(a._id)}/>
+                            {this.state.articles.map((a, index) => <SavedCard key={`${a._id}${index}`} id={a._id} url={a.link} title={a.title} removeArticle={() => this.handleRemoval(a._id)}/>
                             )}
                         </Col>
                     </Row>  

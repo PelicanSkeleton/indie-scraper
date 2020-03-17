@@ -1,4 +1,5 @@
 import React from "react";
+import CardBtn from "../CardBtn";
 import { Row, Col } from "../Grid";
 
 const Card = props => (
@@ -7,6 +8,9 @@ const Card = props => (
       <Row>
         <Col size="md-10">
           <h5><a href={props.link}>{props.title}</a></h5>
+        </Col>
+        <Col size="md-2">
+          <CardBtn id={props.id} content="Notes" data-value={props.id} href="/notes"/>
         </Col>
       </Row>
     </div>

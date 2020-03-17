@@ -70,6 +70,7 @@ module.exports = {
         axios.get("https://www.dischord.com").then(function (response) {
             var $ = cheerio.load(response.data);
             var dischord = [];
+
             var noArticle = 0;
 
             $("h2").each(function (i, element) {
@@ -81,14 +82,17 @@ module.exports = {
                     link: link
                 });
 
+
                 db.Article.find({})
-                    .then(function (dischord) {
-                        for (i = 0; i < dischord.length; i++) {
-                            if (dischord[i].title !== title) {
+                    .then(function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            if (data[i].title !== title) {
                                 noArticle++;
                             }
                         }
-                        if (noArticle === dischord.length) {
+                        console.log(noArticle);
+                        console.log(data.length);
+                        if (noArticle === data.length) {
                             db.Article.create(article)
                                 .then(function (dbArticle) {
                                     console.log(dbArticle);
@@ -105,11 +109,13 @@ module.exports = {
                         return res.end(err);
                     });
             });
-            res.json({ message: "Dischord scrape complete." });
+            var scrapedDischord = JSON.stringify(dischord);
+            res.json(scrapedDischord);
+            // res.json(dischord);
+            // res.json({ message: "Dischord scrape complete." });
             console.log("Dischord: ");
             console.log(dischord);
             console.log("\n");
-            res.json(dischord);
         });
     },
 
@@ -331,7 +337,7 @@ module.exports = {
     // })
 
     savedArticles: function (req, res) {
-        db.Article.find({ saved: true })
+        db.Article.find({ saved: true }).sort({ created: -1 }).limit(20).populate("note")
             .then(function (dbFound) {
                 res.json(dbFound)
             })
@@ -342,8 +348,8 @@ module.exports = {
             });
     },
 
-    getArticles: function (req, res) {
-        db.Article.find({})
+    getAllArticles: function (req, res) {
+        db.Article.find({}).sort({ created: -1 }).limit(20).populate("note")
             .then(function (dbFound) {
                 res.json(dbFound)
             })
@@ -357,6 +363,7 @@ module.exports = {
     getArticlesById: function (req, res) {
         var id = req.params.id;
         db.Article.findOne({ _id: id })
+            .populate("note")
             .then(function (dbFound) {
                 res.json(dbFound);
             })
@@ -370,5 +377,15 @@ module.exports = {
             .then(dbModel => dbModel.remove())
             .then(dbModel => res.json(dbModel))
             .catch(err => res.status(422).json(err));
+    },
+
+    removeNote: (req, res) => {
+        db.Article.findByIdAndUpdate(req.params.id, {$pull: {note: req.body.noteId}})
+        .then(function(edited) {
+            res.json(edited);
+        })
+        .catch(function(error) {
+            res.end(error);
+        });
     }
 };

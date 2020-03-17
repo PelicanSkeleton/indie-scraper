@@ -24,12 +24,12 @@ const Nav = (props) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-info sticky-top border-bottom border-dark rounded mb-3">
       <Col size="md-2">
-        <Link to="/articles" className="navbar-brand">Scraped Pi</Link>
+        <Link to="/articles" className="navbar-brand">Indie Scraper</Link>
       </Col>
       <Col size="md-1">
         <NavLink to="/watched-articles">
           <div className="nav-item">
-            Watching
+            Saved
           </div>
         </NavLink>
       </Col>

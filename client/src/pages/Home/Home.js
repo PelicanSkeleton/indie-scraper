@@ -3,8 +3,9 @@ import API from "../../utils/API";
 import Card from "../../components/Card";
 import { Row, Container, Col } from "../../components/Grid";
 import { ScrapeBtn } from "../../components/ScrapeBtn";
+
 class Home extends Component {
-   
+
     state = {
         articles: [],
         scrapeText: "Scrape",
@@ -13,17 +14,17 @@ class Home extends Component {
 
     componentDidMount() {
         API.getAllArticles()
-            .then(result => this.setState({articles: result.data}));
+            .then(result => this.setState({ articles: result.data }));
     }
 
     runScrape = () => {
-        this.setState({scrapeText: "Scraping..."});
-        API.scrape();
+        this.setState({ scrapeText: "Scraping..." });
+        API.scrapeDischord()
         API.getAllArticles()
             .then(result => this.setState({articles: result.data, scrapeText: "Done", ScrapeBg: "bg-success"}));
 
         setTimeout(() => {
-            return this.setState({scrapeText: "Scrape"});
+            return this.setState({ scrapeText: "Scrape" });
         }, 2000);
     }
 
@@ -34,13 +35,13 @@ class Home extends Component {
                 <Container>
                     <Row>
                         <Col size="md-2">
-                            <ScrapeBtn bootstrap="btn btn-lg text-light btn-info mt-5" onClick={this.runScrape}>{this.state.scrapeText}</ScrapeBtn>
+        <ScrapeBtn bootstrap="btn btn-lg text-light btn-info mt-5" onClick={this.runScrape}>{this.state.scrapeText}</ScrapeBtn>
                         </Col>
                         <Col size="md-10 sm-12">
                             <h1>Articles</h1>
                             {this.state.articles.map(a => <Card key={a._id} id={a._id} url={a.link} title={a.title} link={a.link} />)}
                         </Col>
-                    </Row>  
+                    </Row>
                 </Container>
             </div>
         )
